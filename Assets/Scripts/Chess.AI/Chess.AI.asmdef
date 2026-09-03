@@ -1,0 +1,16 @@
+{
+    "name": "Chess.AI",
+    "rootNamespace": "Chess.AI",
+    "references": [
+        "Chess.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}
