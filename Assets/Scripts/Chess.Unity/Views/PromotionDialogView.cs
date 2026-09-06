@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Chess.Core.Primitives;
 using Chess.Unity.Config;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -140,6 +141,56 @@ namespace Chess.Unity.Views
         {
             GameObject target = _root != null ? _root : gameObject;
             target.SetActive(active);
+        }
+
+        /// <summary>
+        /// Builds a complete promotion dialog so the game is playable before a designed canvas exists.
+        /// </summary>
+        public static PromotionDialogView CreateDefault(Transform parent)
+        {
+            RectTransform overlay = UiFactory.CreateRect(parent, "PromotionDialog");
+            UiFactory.StretchFill(overlay);
+            overlay.gameObject.SetActive(false);
+            UiFactory.PanelImage(overlay, new Color(0.05f, 0.04f, 0.03f, 0.55f));
+
+            var view = overlay.gameObject.AddComponent<PromotionDialogView>();
+            view._root = overlay.gameObject;
+
+            RectTransform card = UiFactory.CreateRect(overlay, "Card");
+            UiFactory.Stretch(card, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-220f, -120f), new Vector2(220f, 120f));
+            UiFactory.PanelImage(card, UiFactory.PanelSolid);
+            UiFactory.Vertical(card, 12f, 16);
+
+            TMP_Text title = UiFactory.Label(card, "Title", "Promote pawn", 26f, TextAlignmentOptions.Center);
+            UiFactory.Size(title, 0f, 32f);
+
+            RectTransform pieces = UiFactory.CreateRect(card, "Pieces");
+            UiFactory.Size(pieces, 0f, 88f);
+            UiFactory.Horizontal(pieces, 10f, 0);
+
+            view._pieceButtons = new Button[4];
+            view._pieceIcons = new Image[4];
+            string[] captions = { "Queen", "Rook", "Bishop", "Knight" };
+
+            for (int i = 0; i < captions.Length; i++)
+            {
+                Button button = UiFactory.TextButton(pieces, captions[i], string.Empty, UiFactory.Button);
+                UiFactory.Size(button, 0f, 88f).flexibleWidth = 1f;
+
+                RectTransform iconRect = UiFactory.CreateRect(button.transform, "Icon");
+                UiFactory.Stretch(iconRect, new Vector2(0.15f, 0.15f), new Vector2(0.85f, 0.85f), Vector2.zero, Vector2.zero);
+                var icon = iconRect.gameObject.AddComponent<Image>();
+                icon.preserveAspect = true;
+                icon.raycastTarget = false;
+
+                view._pieceButtons[i] = button;
+                view._pieceIcons[i] = icon;
+            }
+
+            view._cancelButton = UiFactory.TextButton(card, "Cancel", "Cancel", UiFactory.Button);
+            UiFactory.Size(view._cancelButton, 0f, 40f);
+            overlay.gameObject.SetActive(true);
+            return view;
         }
     }
 }

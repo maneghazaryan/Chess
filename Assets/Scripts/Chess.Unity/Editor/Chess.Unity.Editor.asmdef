@@ -1,0 +1,22 @@
+{
+    "name": "Chess.Unity.Editor",
+    "rootNamespace": "Chess.Unity.Editor",
+    "references": [
+        "Chess.Unity",
+        "Chess.Core",
+        "Chess.AI",
+        "Unity.TextMeshPro",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

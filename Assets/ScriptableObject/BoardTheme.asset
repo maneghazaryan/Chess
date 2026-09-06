@@ -19,10 +19,10 @@ MonoBehaviour:
   _captureTarget: {r: 0.85, g: 0.25, b: 0.2, a: 0.55}
   _lastMove: {r: 0.95, g: 0.9, b: 0.35, a: 0.35}
   _check: {r: 0.9, g: 0.15, b: 0.1, a: 0.7}
-  _squareSprite: {fileID: 0}
-  _legalMoveDotSprite: {fileID: 0}
-  _captureRingSprite: {fileID: 0}
-  _squareHighlightSprite: {fileID: 0}
+  _squareSprite: {fileID: 21300000, guid: 5da9e8e3c1e444d1f893427b794b33d8, type: 3}
+  _legalMoveDotSprite: {fileID: 21300000, guid: 2f8d4c6a1b9e4e7f8c3a5d0e1b7f9c24, type: 3}
+  _captureRingSprite: {fileID: 21300000, guid: 9e1a6b3c8d5f4a2e7c0b4d8f1a3e6c59, type: 3}
+  _squareHighlightSprite: {fileID: 21300000, guid: 7c3e1a90b4d24f6e9a8c2d1e0f3b5a67, type: 3}
   _squareSize: 1
   _moveAnimationDuration: 0.18
   _moveAnimationCurve:

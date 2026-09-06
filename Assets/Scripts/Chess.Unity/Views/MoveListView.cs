@@ -53,6 +53,12 @@ namespace Chess.Unity.Views
             Rebuild();
         }
 
+        internal void Bind(RectTransform rowContainer, ScrollRect scrollRect)
+        {
+            _rowContainer = rowContainer;
+            _scrollRect = scrollRect;
+        }
+
         /// <summary>The whole game as PGN-style movetext, for copying out or logging.</summary>
         public string ToMoveText()
         {

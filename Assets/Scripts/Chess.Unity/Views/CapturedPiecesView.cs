@@ -35,6 +35,12 @@ namespace Chess.Unity.Views
             _pieceSprites = pieceSprites != null ? pieceSprites : _pieceSprites;
         }
 
+        internal void Bind(RectTransform iconContainer, TMP_Text advantageLabel)
+        {
+            _iconContainer = iconContainer;
+            _advantageLabel = advantageLabel;
+        }
+
         public void SetCapturedPieces(IReadOnlyList<Piece> captured, int materialAdvantage)
         {
             SortByValueDescending(captured);

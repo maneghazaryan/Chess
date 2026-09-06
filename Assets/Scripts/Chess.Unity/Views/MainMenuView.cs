@@ -32,8 +32,12 @@ namespace Chess.Unity.Views
         [Tooltip("Shown only for modes that involve the computer.")]
         [SerializeField] private GameObject _aiOptionsPanel;
 
-        [Tooltip("Populated at runtime with Easy, Medium and Hard.")]
+        [Tooltip("Optional. Used when difficulty is presented as a dropdown instead of buttons.")]
         [SerializeField] private TMP_Dropdown _difficultyDropdown;
+
+        [SerializeField] private Button _easyButton;
+        [SerializeField] private Button _mediumButton;
+        [SerializeField] private Button _hardButton;
 
         [Header("Side")]
         [Tooltip("Shown only when a human is facing the computer.")]
@@ -47,6 +51,7 @@ namespace Chess.Unity.Views
         [SerializeField] private Button _quitButton;
 
         private GameMode _mode = GameMode.HumanVsHuman;
+        private AiDifficulty _difficulty = AiDifficulty.Medium;
 
         public event Action<GameSetup> StartGameRequested;
 
@@ -73,19 +78,40 @@ namespace Chess.Unity.Views
             Bind(_humanVsHumanButton, () => SelectMode(GameMode.HumanVsHuman));
             Bind(_humanVsAiButton, () => SelectMode(GameMode.HumanVsAi));
             Bind(_aiVsAiButton, () => SelectMode(GameMode.AiVsAi));
+            Bind(_easyButton, () => SelectDifficulty(AiDifficulty.Easy));
+            Bind(_mediumButton, () => SelectDifficulty(AiDifficulty.Medium));
+            Bind(_hardButton, () => SelectDifficulty(AiDifficulty.Hard));
             Bind(_startButton, StartGame);
             Bind(_quitButton, () => QuitRequested?.Invoke());
 
             PopulateDifficultyDropdown();
+            RefreshDifficultyButtons();
             RefreshOptionVisibility();
+        }
+
+        public void SelectDifficulty(AiDifficulty difficulty)
+        {
+            _difficulty = difficulty;
+
+            if (_difficultyDropdown != null)
+            {
+                _difficultyDropdown.SetValueWithoutNotify((int)difficulty);
+                _difficultyDropdown.RefreshShownValue();
+            }
+
+            RefreshDifficultyButtons();
         }
 
         private GameSetup BuildSetup()
         {
-            var difficulty = (AiDifficulty)Mathf.Clamp(
-                _difficultyDropdown != null ? _difficultyDropdown.value : (int)AiDifficulty.Medium,
-                0,
-                Enum.GetValues(typeof(AiDifficulty)).Length - 1);
+            AiDifficulty difficulty = _difficulty;
+            if (_easyButton == null && _difficultyDropdown != null)
+            {
+                difficulty = (AiDifficulty)Mathf.Clamp(
+                    _difficultyDropdown.value,
+                    0,
+                    Enum.GetValues(typeof(AiDifficulty)).Length - 1);
+            }
 
             PieceColor humanColor = _playAsBlackToggle != null && _playAsBlackToggle.isOn
                 ? PieceColor.Black
@@ -104,7 +130,31 @@ namespace Chess.Unity.Views
             _difficultyDropdown.ClearOptions();
             _difficultyDropdown.AddOptions(new System.Collections.Generic.List<string>(
                 Enum.GetNames(typeof(AiDifficulty))));
-            _difficultyDropdown.value = (int)AiDifficulty.Medium;
+            _difficultyDropdown.SetValueWithoutNotify((int)_difficulty);
+            _difficultyDropdown.RefreshShownValue();
+            _difficultyDropdown.onValueChanged.AddListener(index =>
+                SelectDifficulty((AiDifficulty)Mathf.Clamp(index, 0, 2)));
+        }
+
+        private void RefreshDifficultyButtons()
+        {
+            TintDifficultyButton(_easyButton, _difficulty == AiDifficulty.Easy);
+            TintDifficultyButton(_mediumButton, _difficulty == AiDifficulty.Medium);
+            TintDifficultyButton(_hardButton, _difficulty == AiDifficulty.Hard);
+        }
+
+        private static void TintDifficultyButton(Button button, bool selected)
+        {
+            if (button == null)
+            {
+                return;
+            }
+
+            var image = button.targetGraphic as Image;
+            if (image != null)
+            {
+                image.color = selected ? UiFactory.ButtonAccent : UiFactory.Button;
+            }
         }
 
         private void RefreshOptionVisibility()
@@ -157,6 +207,76 @@ namespace Chess.Unity.Views
                 case GameMode.AiVsAi: return "Computer vs computer";
                 default: return mode.ToString();
             }
+        }
+
+        /// <summary>
+        /// Builds a complete menu so the game is playable before a designed canvas exists.
+        /// </summary>
+        public static MainMenuView CreateDefault(Transform parent)
+        {
+            RectTransform overlay = UiFactory.CreateRect(parent, "MainMenu");
+            UiFactory.StretchFill(overlay);
+            overlay.gameObject.SetActive(false);
+            UiFactory.PanelImage(overlay, new Color(0.05f, 0.04f, 0.03f, 0.72f));
+
+            var view = overlay.gameObject.AddComponent<MainMenuView>();
+            view._root = overlay.gameObject;
+
+            RectTransform card = UiFactory.CreateRect(overlay, "Card");
+            UiFactory.Stretch(card, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-230f, -310f), new Vector2(230f, 310f));
+            UiFactory.PanelImage(card, UiFactory.PanelSolid);
+            UiFactory.Vertical(card, 12f, 24);
+
+            TMP_Text title = UiFactory.Label(card, "Title", "Chess", 48f, TextAlignmentOptions.Center);
+            UiFactory.Size(title, 0f, 56f);
+
+            view._selectedModeLabel = UiFactory.Label(card, "ModeLabel", "Two players", 20f, TextAlignmentOptions.Center);
+            UiFactory.Size(view._selectedModeLabel, 0f, 28f);
+
+            view._humanVsHumanButton = UiFactory.TextButton(card, "TwoPlayers", "Two players", UiFactory.Button);
+            UiFactory.Size(view._humanVsHumanButton, 0f, 44f);
+            view._humanVsAiButton = UiFactory.TextButton(card, "VsComputer", "Player vs computer", UiFactory.Button);
+            UiFactory.Size(view._humanVsAiButton, 0f, 44f);
+            view._aiVsAiButton = UiFactory.TextButton(card, "ComputerMatch", "Computer vs computer", UiFactory.Button);
+            UiFactory.Size(view._aiVsAiButton, 0f, 44f);
+
+            RectTransform aiOptions = UiFactory.CreateRect(card, "AiOptions");
+            UiFactory.Size(aiOptions, 0f, 84f);
+            UiFactory.Vertical(aiOptions, 6f, 0);
+            TMP_Text difficultyLabel = UiFactory.Label(aiOptions, "DifficultyLabel", "Difficulty", 16f, TextAlignmentOptions.Center);
+            UiFactory.Size(difficultyLabel, 0f, 20f);
+
+            RectTransform difficultyRow = UiFactory.CreateRect(aiOptions, "Difficulty");
+            UiFactory.Size(difficultyRow, 0f, 44f);
+            UiFactory.Horizontal(difficultyRow, 8f, 0);
+            view._easyButton = UiFactory.TextButton(difficultyRow, "Easy", "Easy", UiFactory.Button);
+            view._mediumButton = UiFactory.TextButton(difficultyRow, "Medium", "Medium", UiFactory.ButtonAccent);
+            view._hardButton = UiFactory.TextButton(difficultyRow, "Hard", "Hard", UiFactory.Button);
+            UiFactory.Size(view._easyButton, 0f, 44f).flexibleWidth = 1f;
+            UiFactory.Size(view._mediumButton, 0f, 44f).flexibleWidth = 1f;
+            UiFactory.Size(view._hardButton, 0f, 44f).flexibleWidth = 1f;
+            view._aiOptionsPanel = aiOptions.gameObject;
+
+            RectTransform side = UiFactory.CreateRect(card, "Side");
+            UiFactory.Size(side, 0f, 48f);
+            UiFactory.Horizontal(side, 10f, 0);
+            var group = side.gameObject.AddComponent<ToggleGroup>();
+            view._playAsWhiteToggle = UiFactory.TextToggle(side, "PlayWhite", "Play White");
+            view._playAsWhiteToggle.group = group;
+            view._playAsWhiteToggle.isOn = true;
+            view._playAsBlackToggle = UiFactory.TextToggle(side, "PlayBlack", "Play Black");
+            view._playAsBlackToggle.group = group;
+            UiFactory.Size(view._playAsWhiteToggle, 0f, 44f).flexibleWidth = 1f;
+            UiFactory.Size(view._playAsBlackToggle, 0f, 44f).flexibleWidth = 1f;
+            view._sidePanel = side.gameObject;
+
+            view._startButton = UiFactory.TextButton(card, "Start", "Start game", UiFactory.ButtonAccent);
+            UiFactory.Size(view._startButton, 0f, 52f);
+            view._quitButton = UiFactory.TextButton(card, "Quit", "Quit", UiFactory.Button);
+            UiFactory.Size(view._quitButton, 0f, 40f);
+
+            overlay.gameObject.SetActive(true);
+            return view;
         }
     }
 }

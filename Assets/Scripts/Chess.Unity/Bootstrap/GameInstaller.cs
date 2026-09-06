@@ -8,6 +8,8 @@ using Chess.Unity.Input;
 using Chess.Unity.Players;
 using Chess.Unity.Views;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 
 namespace Chess.Unity.Bootstrap
 {
@@ -60,6 +62,8 @@ namespace Chess.Unity.Bootstrap
 
         private void Awake()
         {
+            EnsurePlayableScene();
+
             if (!ValidateSceneReferences())
             {
                 enabled = false;
@@ -186,6 +190,106 @@ namespace Chess.Unity.Bootstrap
             Vector3 boardCentre = _boardView.transform.position;
             _boardCamera.transform.position = new Vector3(
                 boardCentre.x, boardCentre.y, _boardCamera.transform.position.z);
+        }
+
+        /// <summary>
+        /// Builds any missing scene objects so a single installer plus the three config assets is
+        /// enough to play. Designed canvases and prefabs still win when they are already assigned.
+        /// </summary>
+        private void EnsurePlayableScene()
+        {
+            if (_boardCamera == null)
+            {
+                _boardCamera = Camera.main;
+            }
+
+            EnsureEventSystem();
+            EnsureBoard();
+            EnsureAudio();
+            EnsureUserInterface();
+        }
+
+        private static void EnsureEventSystem()
+        {
+            if (FindFirstObjectByType<EventSystem>() != null)
+            {
+                return;
+            }
+
+            var host = new GameObject("EventSystem");
+            host.AddComponent<EventSystem>();
+            host.AddComponent<InputSystemUIInputModule>();
+        }
+
+        private void EnsureBoard()
+        {
+            if (_boardView == null)
+            {
+                _boardView = FindFirstObjectByType<BoardView>();
+            }
+
+            if (_boardView == null)
+            {
+                var host = new GameObject("Board");
+                host.transform.position = Vector3.zero;
+                _boardView = host.AddComponent<BoardView>();
+            }
+
+            if (_inputSource == null)
+            {
+                _inputSource = _boardView.GetComponent<PointerBoardInputSource>();
+            }
+
+            if (_inputSource == null)
+            {
+                _inputSource = _boardView.gameObject.AddComponent<PointerBoardInputSource>();
+            }
+        }
+
+        private void EnsureAudio()
+        {
+            if (_audioService == null)
+            {
+                _audioService = FindFirstObjectByType<ChessAudioService>();
+            }
+
+            if (_audioService == null)
+            {
+                var host = new GameObject("Audio");
+                host.AddComponent<AudioSource>().playOnAwake = false;
+                _audioService = host.AddComponent<ChessAudioService>();
+            }
+        }
+
+        private void EnsureUserInterface()
+        {
+            if (_hudView != null && _mainMenuView != null && _promotionView != null)
+            {
+                return;
+            }
+
+            Canvas canvas = FindFirstObjectByType<Canvas>();
+            if (canvas == null)
+            {
+                canvas = UiFactory.OverlayCanvas("Canvas");
+            }
+
+            Transform root = canvas.transform;
+
+            if (_hudView == null)
+            {
+                _hudView = GameHudView.CreateDefault(root);
+            }
+
+            if (_mainMenuView == null)
+            {
+                _mainMenuView = MainMenuView.CreateDefault(root);
+            }
+
+            if (_promotionView == null)
+            {
+                _promotionView = PromotionDialogView.CreateDefault(root);
+            }
         }
 
         private bool ValidateSceneReferences()
