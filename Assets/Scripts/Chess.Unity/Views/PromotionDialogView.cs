@@ -157,12 +157,12 @@ namespace Chess.Unity.Views
             view._root = overlay.gameObject;
 
             RectTransform card = UiFactory.CreateRect(overlay, "Card");
-            UiFactory.Stretch(card, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-220f, -120f), new Vector2(220f, 120f));
+            UiFactory.Stretch(card, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-260f, -140f), new Vector2(260f, 140f));
             UiFactory.PanelImage(card, UiFactory.PanelSolid);
             UiFactory.Vertical(card, 12f, 16);
 
-            TMP_Text title = UiFactory.Label(card, "Title", "Promote pawn", 26f, TextAlignmentOptions.Center);
-            UiFactory.Size(title, 0f, 32f);
+            TMP_Text title = UiFactory.Label(card, "Title", "Promote pawn", UiFactory.SizeHeading, TextAlignmentOptions.Center);
+            UiFactory.Size(title, 0f, 44f);
 
             RectTransform pieces = UiFactory.CreateRect(card, "Pieces");
             UiFactory.Size(pieces, 0f, 88f);

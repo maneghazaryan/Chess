@@ -16,6 +16,12 @@ namespace Chess.Unity.Views
         public static readonly Color Cream = new Color(0.96f, 0.91f, 0.80f, 1f);
         public static readonly Color Muted = new Color(0.82f, 0.76f, 0.66f, 1f);
 
+        public const float SizeTitle = 64f;
+        public const float SizeHeading = 36f;
+        public const float SizeButton = 32f;
+        public const float SizeBody = 30f;
+        public const float SizeCaption = 26f;
+
         public static RectTransform CreateRect(Transform parent, string objectName)
         {
             var host = new GameObject(objectName, typeof(RectTransform));
@@ -70,7 +76,7 @@ namespace Chess.Unity.Views
             colors.pressedColor = Color.Lerp(color, Color.black, 0.18f);
             button.colors = colors;
 
-            TMP_Text label = Label(rect, "Label", caption, 22f, TextAlignmentOptions.Center);
+            TMP_Text label = Label(rect, "Label", caption, SizeButton, TextAlignmentOptions.Center);
             StretchFill((RectTransform)label.transform);
             return button;
         }
@@ -85,7 +91,7 @@ namespace Chess.Unity.Views
             toggle.targetGraphic = image;
             toggle.isOn = false;
 
-            TMP_Text label = Label(rect, "Label", caption, 20f, TextAlignmentOptions.Center);
+            TMP_Text label = Label(rect, "Label", caption, SizeButton, TextAlignmentOptions.Center);
             StretchFill((RectTransform)label.transform);
 
             toggle.onValueChanged.AddListener(on =>
@@ -178,10 +184,10 @@ namespace Chess.Unity.Views
             var dropdown = root.gameObject.AddComponent<TMP_Dropdown>();
             dropdown.targetGraphic = background;
 
-            TMP_Text caption = Label(root, "Label", "Medium", 20f, TextAlignmentOptions.MidlineLeft);
+            TMP_Text caption = Label(root, "Label", "Medium", SizeBody, TextAlignmentOptions.MidlineLeft);
             Stretch((RectTransform)caption.transform, Vector2.zero, Vector2.one, new Vector2(12f, 0f), new Vector2(-28f, 0f));
 
-            TMP_Text arrow = Label(root, "Arrow", "▾", 18f, TextAlignmentOptions.Center);
+            TMP_Text arrow = Label(root, "Arrow", "▾", SizeCaption, TextAlignmentOptions.Center);
             Stretch((RectTransform)arrow.transform, new Vector2(1f, 0f), Vector2.one, new Vector2(-28f, 0f), Vector2.zero);
 
             RectTransform template = CreateRect(root, "Template");
@@ -222,7 +228,7 @@ namespace Chess.Unity.Views
             var checkImage = PanelImage(checkmark, Cream);
             toggle.graphic = checkImage;
 
-            TMP_Text itemLabel = Label(item, "Item Label", "Option", 18f, TextAlignmentOptions.MidlineLeft);
+            TMP_Text itemLabel = Label(item, "Item Label", "Option", SizeCaption, TextAlignmentOptions.MidlineLeft);
             Stretch((RectTransform)itemLabel.transform, Vector2.zero, Vector2.one, new Vector2(28f, 0f), new Vector2(-8f, 0f));
 
             scroll.viewport = viewport;

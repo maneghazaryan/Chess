@@ -26,6 +26,7 @@ namespace Chess.Unity.Controllers
         private CancellationTokenSource _promotionCancellation;
         private Square _selectedSquare = Square.None;
         private PieceColor _activeColor;
+        private int _turnSession;
         private bool _isAcceptingInput;
         private bool _isAwaitingPromotion;
 
@@ -40,15 +41,22 @@ namespace Chess.Unity.Controllers
 
         public event Action<Move> MoveChosen;
 
-        public void BeginTurn(PieceColor color)
+        public int BeginTurn(PieceColor color)
         {
+            _turnSession++;
             _activeColor = color;
             _isAcceptingInput = true;
             _boardView.SetInteractable(true);
+            return _turnSession;
         }
 
-        public void EndTurn()
+        public void EndTurn(int turnSession)
         {
+            if (turnSession != _turnSession)
+            {
+                return;
+            }
+
             _isAcceptingInput = false;
             _boardView.SetInteractable(false);
             CancelPendingPromotion();

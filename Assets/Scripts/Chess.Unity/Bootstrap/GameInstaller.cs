@@ -95,6 +95,7 @@ namespace Chess.Unity.Bootstrap
             _mainMenuView.StartGameRequested += OnStartGameRequested;
             _mainMenuView.QuitRequested += OnQuitRequested;
             _hudView.MenuRequested += OnMenuRequested;
+            _hudView.LayoutChanged += FrameCameraToBoard;
         }
 
         private void Start()
@@ -129,6 +130,7 @@ namespace Chess.Unity.Bootstrap
             if (_hudView != null)
             {
                 _hudView.MenuRequested -= OnMenuRequested;
+                _hudView.LayoutChanged -= FrameCameraToBoard;
             }
 
             // Disposal order mirrors construction: the controller cancels any search in flight,
@@ -141,6 +143,7 @@ namespace Chess.Unity.Bootstrap
         {
             _mainMenuView.Hide();
             _gameController.StartNewMatch(setup);
+            FrameCameraToBoard();
         }
 
         private void OnMenuRequested()
@@ -171,25 +174,45 @@ namespace Chess.Unity.Bootstrap
         }
 
         /// <summary>
-        /// Sizes an orthographic camera so the whole board fits with a small margin, which saves
-        /// re-framing by hand whenever the square size changes.
+        /// Fits the board into the screen rectangle the HUD is not using, so a portrait chrome
+        /// strip or a landscape side panel never sits on top of the squares.
         /// </summary>
         private void FrameCameraToBoard()
         {
-            if (_boardCamera == null || !_boardCamera.orthographic || _boardTheme == null)
+            if (!_frameCameraToBoard || _boardCamera == null || !_boardCamera.orthographic || _boardView == null)
             {
                 return;
             }
 
-            const float marginFraction = 1.1f;
-            float boardExtent = _boardView.Geometry.BoardExtent * 0.5f * marginFraction;
+            _hudView.ApplyResponsiveLayout();
+            Canvas.ForceUpdateCanvases();
 
+            float left = 0f;
+            float right = 0f;
+            float top = 0f;
+            float bottom = 0f;
+            _hudView.GetBoardSafeInsets(out left, out right, out top, out bottom);
+
+            float widthFraction = Mathf.Max(0.28f, 1f - left - right);
+            float heightFraction = Mathf.Max(0.28f, 1f - top - bottom);
+
+            float boardSize = _boardView.Geometry.BoardExtent * 1.06f;
             float aspect = _boardCamera.aspect > 0f ? _boardCamera.aspect : 1f;
-            _boardCamera.orthographicSize = aspect >= 1f ? boardExtent : boardExtent / aspect;
+
+            float sizeForHeight = boardSize / (2f * heightFraction);
+            float sizeForWidth = boardSize / (2f * aspect * widthFraction);
+            _boardCamera.orthographicSize = Mathf.Max(sizeForHeight, sizeForWidth);
+
+            float worldWidth = 2f * _boardCamera.orthographicSize * aspect;
+            float worldHeight = 2f * _boardCamera.orthographicSize;
+            float viewportCenterX = left + widthFraction * 0.5f;
+            float viewportCenterY = bottom + heightFraction * 0.5f;
 
             Vector3 boardCentre = _boardView.transform.position;
             _boardCamera.transform.position = new Vector3(
-                boardCentre.x, boardCentre.y, _boardCamera.transform.position.z);
+                boardCentre.x - (viewportCenterX - 0.5f) * worldWidth,
+                boardCentre.y - (viewportCenterY - 0.5f) * worldHeight,
+                _boardCamera.transform.position.z);
         }
 
         /// <summary>

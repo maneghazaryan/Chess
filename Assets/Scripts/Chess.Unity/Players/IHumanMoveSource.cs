@@ -16,10 +16,13 @@ namespace Chess.Unity.Players
         /// <summary>Raised with a fully resolved legal move, promotion choice included.</summary>
         event Action<Move> MoveChosen;
 
-        /// <summary>Starts accepting input for the given colour.</summary>
-        void BeginTurn(PieceColor color);
+        /// <summary>
+        /// Starts accepting input for the given colour. Returns a session id so a cancelled turn
+        /// can end itself without disabling a newer one that has already begun.
+        /// </summary>
+        int BeginTurn(PieceColor color);
 
-        /// <summary>Stops accepting input and clears any partial selection.</summary>
-        void EndTurn();
+        /// <summary>Stops accepting input for <paramref name="turnSession"/>, if it is still current.</summary>
+        void EndTurn(int turnSession);
     }
 }

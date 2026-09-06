@@ -35,9 +35,9 @@ namespace Chess.Unity.Views
             layout.childForceExpandHeight = false;
 
             var entry = host.AddComponent<MoveListEntry>();
-            entry._moveNumberLabel = CreateLabel(host.transform, "Number", 44f);
-            entry._whiteMoveLabel = CreateLabel(host.transform, "White", 80f);
-            entry._blackMoveLabel = CreateLabel(host.transform, "Black", 80f);
+            entry._moveNumberLabel = CreateLabel(host.transform, "Number", 56f);
+            entry._whiteMoveLabel = CreateLabel(host.transform, "White", 110f);
+            entry._blackMoveLabel = CreateLabel(host.transform, "Black", 110f);
             return entry;
         }
 
@@ -47,11 +47,12 @@ namespace Chess.Unity.Views
             host.transform.SetParent(parent, false);
 
             var label = host.AddComponent<TextMeshProUGUI>();
-            label.fontSize = 20f;
+            label.fontSize = UiFactory.SizeCaption;
+            label.color = UiFactory.Cream;
 
             var element = host.AddComponent<LayoutElement>();
             element.preferredWidth = width;
-            element.preferredHeight = 26f;
+            element.preferredHeight = 36f;
 
             return label;
         }

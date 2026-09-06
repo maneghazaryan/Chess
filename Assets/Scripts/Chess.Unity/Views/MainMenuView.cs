@@ -223,42 +223,42 @@ namespace Chess.Unity.Views
             view._root = overlay.gameObject;
 
             RectTransform card = UiFactory.CreateRect(overlay, "Card");
-            UiFactory.Stretch(card, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-230f, -310f), new Vector2(230f, 310f));
+            UiFactory.Stretch(card, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-280f, -360f), new Vector2(280f, 360f));
             UiFactory.PanelImage(card, UiFactory.PanelSolid);
-            UiFactory.Vertical(card, 12f, 24);
+            UiFactory.Vertical(card, 14f, 28);
 
-            TMP_Text title = UiFactory.Label(card, "Title", "Chess", 48f, TextAlignmentOptions.Center);
-            UiFactory.Size(title, 0f, 56f);
+            TMP_Text title = UiFactory.Label(card, "Title", "Chess", UiFactory.SizeTitle, TextAlignmentOptions.Center);
+            UiFactory.Size(title, 0f, 72f);
 
-            view._selectedModeLabel = UiFactory.Label(card, "ModeLabel", "Two players", 20f, TextAlignmentOptions.Center);
-            UiFactory.Size(view._selectedModeLabel, 0f, 28f);
+            view._selectedModeLabel = UiFactory.Label(card, "ModeLabel", "Two players", UiFactory.SizeBody, TextAlignmentOptions.Center);
+            UiFactory.Size(view._selectedModeLabel, 0f, 36f);
 
             view._humanVsHumanButton = UiFactory.TextButton(card, "TwoPlayers", "Two players", UiFactory.Button);
-            UiFactory.Size(view._humanVsHumanButton, 0f, 44f);
+            UiFactory.Size(view._humanVsHumanButton, 0f, 56f);
             view._humanVsAiButton = UiFactory.TextButton(card, "VsComputer", "Player vs computer", UiFactory.Button);
-            UiFactory.Size(view._humanVsAiButton, 0f, 44f);
+            UiFactory.Size(view._humanVsAiButton, 0f, 56f);
             view._aiVsAiButton = UiFactory.TextButton(card, "ComputerMatch", "Computer vs computer", UiFactory.Button);
-            UiFactory.Size(view._aiVsAiButton, 0f, 44f);
+            UiFactory.Size(view._aiVsAiButton, 0f, 56f);
 
             RectTransform aiOptions = UiFactory.CreateRect(card, "AiOptions");
-            UiFactory.Size(aiOptions, 0f, 84f);
-            UiFactory.Vertical(aiOptions, 6f, 0);
-            TMP_Text difficultyLabel = UiFactory.Label(aiOptions, "DifficultyLabel", "Difficulty", 16f, TextAlignmentOptions.Center);
-            UiFactory.Size(difficultyLabel, 0f, 20f);
+            UiFactory.Size(aiOptions, 0f, 104f);
+            UiFactory.Vertical(aiOptions, 8f, 0);
+            TMP_Text difficultyLabel = UiFactory.Label(aiOptions, "DifficultyLabel", "Difficulty", UiFactory.SizeCaption, TextAlignmentOptions.Center);
+            UiFactory.Size(difficultyLabel, 0f, 30f);
 
             RectTransform difficultyRow = UiFactory.CreateRect(aiOptions, "Difficulty");
-            UiFactory.Size(difficultyRow, 0f, 44f);
+            UiFactory.Size(difficultyRow, 0f, 56f);
             UiFactory.Horizontal(difficultyRow, 8f, 0);
             view._easyButton = UiFactory.TextButton(difficultyRow, "Easy", "Easy", UiFactory.Button);
             view._mediumButton = UiFactory.TextButton(difficultyRow, "Medium", "Medium", UiFactory.ButtonAccent);
             view._hardButton = UiFactory.TextButton(difficultyRow, "Hard", "Hard", UiFactory.Button);
-            UiFactory.Size(view._easyButton, 0f, 44f).flexibleWidth = 1f;
-            UiFactory.Size(view._mediumButton, 0f, 44f).flexibleWidth = 1f;
-            UiFactory.Size(view._hardButton, 0f, 44f).flexibleWidth = 1f;
+            UiFactory.Size(view._easyButton, 0f, 56f).flexibleWidth = 1f;
+            UiFactory.Size(view._mediumButton, 0f, 56f).flexibleWidth = 1f;
+            UiFactory.Size(view._hardButton, 0f, 56f).flexibleWidth = 1f;
             view._aiOptionsPanel = aiOptions.gameObject;
 
             RectTransform side = UiFactory.CreateRect(card, "Side");
-            UiFactory.Size(side, 0f, 48f);
+            UiFactory.Size(side, 0f, 56f);
             UiFactory.Horizontal(side, 10f, 0);
             var group = side.gameObject.AddComponent<ToggleGroup>();
             view._playAsWhiteToggle = UiFactory.TextToggle(side, "PlayWhite", "Play White");
@@ -266,14 +266,14 @@ namespace Chess.Unity.Views
             view._playAsWhiteToggle.isOn = true;
             view._playAsBlackToggle = UiFactory.TextToggle(side, "PlayBlack", "Play Black");
             view._playAsBlackToggle.group = group;
-            UiFactory.Size(view._playAsWhiteToggle, 0f, 44f).flexibleWidth = 1f;
-            UiFactory.Size(view._playAsBlackToggle, 0f, 44f).flexibleWidth = 1f;
+            UiFactory.Size(view._playAsWhiteToggle, 0f, 56f).flexibleWidth = 1f;
+            UiFactory.Size(view._playAsBlackToggle, 0f, 56f).flexibleWidth = 1f;
             view._sidePanel = side.gameObject;
 
             view._startButton = UiFactory.TextButton(card, "Start", "Start game", UiFactory.ButtonAccent);
-            UiFactory.Size(view._startButton, 0f, 52f);
+            UiFactory.Size(view._startButton, 0f, 64f);
             view._quitButton = UiFactory.TextButton(card, "Quit", "Quit", UiFactory.Button);
-            UiFactory.Size(view._quitButton, 0f, 40f);
+            UiFactory.Size(view._quitButton, 0f, 52f);
 
             overlay.gameObject.SetActive(true);
             return view;

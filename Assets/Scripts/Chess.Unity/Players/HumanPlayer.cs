@@ -41,7 +41,7 @@ namespace Chess.Unity.Players
             void OnMoveChosen(Move move) => completion.TrySetResult(move);
 
             _moveSource.MoveChosen += OnMoveChosen;
-            _moveSource.BeginTurn(Color);
+            int turnSession = _moveSource.BeginTurn(Color);
 
             try
             {
@@ -53,7 +53,7 @@ namespace Chess.Unity.Players
             finally
             {
                 _moveSource.MoveChosen -= OnMoveChosen;
-                _moveSource.EndTurn();
+                _moveSource.EndTurn(turnSession);
             }
         }
     }
